@@ -105,7 +105,7 @@ font-4 = "FontAwesome6Free:style=Solid:size=10;0"
 
 modules-left = i3 xwindow
 modules-center = date
-modules-right = athan gas weather battery
+modules-right = athan gas weather
 
 separator = |
 
