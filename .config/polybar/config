@@ -105,7 +105,7 @@ font-4 = "FontAwesome6Free:style=Solid:size=10;0"
 
 modules-left = i3 xwindow
 modules-center = date
-modules-right = athan gas weather
+modules-right = athan gas weather battery
 
 separator = |
 
@@ -1885,17 +1885,17 @@ format-charging = <animation-charging> <label-charging>
 label-charging =  %percentage%%
 format-charging-foreground = ${colors.foreground}
 format-charging-background = ${colors.background}
-format-charging-underline = #a3c725
+format-charging-underline = ${colors.secondary}
 
 format-discharging = <ramp-capacity> <label-discharging>
 label-discharging =  %percentage%%
-format-discharging-underline = #c7ae25
+format-discharging-underline = ${colors.secondary}
 format-discharging-foreground = ${colors.foreground}
 format-discharging-background = ${colors.background}
 
 format-full-prefix = " "
-format-full-prefix-foreground = #a3c725
-format-full-underline = #a3c725
+format-full-prefix-foreground = ${colors.secondary}
+format-full-underline = ${colors.secondary}
 format-full-foreground = ${colors.foreground}
 format-full-background = ${colors.background}
 
