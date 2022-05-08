@@ -144,8 +144,8 @@ mode "$mode_system" {
 }
 
 # ArcoLinux Logout
-bindsym $mod+Shift+e exec --no-startup-id arcolinux-logout
-bindsym $mod+X exec --no-startup-id arcolinux-logout
+bindsym $mod+Shift+e exec --no-startup-id archlinux-logout
+bindsym $mod+X exec --no-startup-id archlinux-logout
 
 # lock screen fix
 bindsym ctrl+$mod+L exec betterlockscreen -l dimblur --time-format "%H:%M"
@@ -422,7 +422,7 @@ exec --no-startup-id /usr/lib/xfce4/notifyd/xfce4-notifyd &
 bindsym control+mod1+w exec --no-startup-id arcolinux-welcome-app
 
 # ArcoLinux Tweak Tool
-bindsym control+mod1+e exec --no-startup-id arcolinux-tweak-tool
+bindsym control+mod1+e exec --no-startup-id archlinux-tweak-tool
 
 # conky
 bindsym $mod+c exec --no-startup-id conky-toggle
@@ -447,8 +447,8 @@ bindsym control+mod1+m exec --no-startup-id xfce4-settings-manager
 # bindsym control+mod1+c exec --no-startup-id catfish;focus
 
 # arcolinux-logout
-bindsym control+mod1+k exec --no-startup-id arcolinux-logout
-bindsym control+mod1+l exec --no-startup-id arcolinux-logout
+bindsym control+mod1+k exec --no-startup-id archlinux-logout
+bindsym control+mod1+l exec --no-startup-id archlinux-logout
 
 # rofi theme selector
 bindsym control+mod1+r exec --no-startup-id rofi-theme-selector
@@ -534,7 +534,7 @@ bindsym $mod+p exec --no-startup-id flameshot gui
 # floating enabled from some programs - find with xprop
 
 for_window [class="Arcolinux-welcome-app.py"] floating enable
-# for_window [class="Arcolinux-tweak-tool.py"] floating enable
+# for_window [class="Archlinux-tweak-tool.py"] floating enable
 for_window [class="Arcolinux-calamares-tool.py"] floating enable
 for_window [class="Bleachbit"] floating disable
 for_window [class="Blueberry.py"] floating enable
