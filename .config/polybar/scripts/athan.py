@@ -5,28 +5,26 @@ import requests
 from datetime import datetime
 
 CITY = "Auckland"
+COUNTRY = "NZ"
 SCHOOL = 3
+URL = "https://api.aladhan.com/v1/timingsByCity?city={}&country={}&method={}".format(CITY, COUNTRY, SCHOOL)
 
 def tdelta(time1, time2):
   # calculate difference
   tdelta = str(datetime.strptime(time2,'%H:%M') - datetime.strptime(time1,'%H:%M')).split(":")
-  if len(tdelta[0]) > 1:
-    hours = tdelta[0][-1]
-  else:
-    hours = tdelta[0]
-
+  hours = int(tdelta[0].split(",")[-1])
   minutes = tdelta[1]
 
   return hours, minutes
 
-REQ = requests.get("https://api.pray.zone/v2/times/today.json?city={}&school={}".format(CITY, SCHOOL))
+REQ = requests.get(URL)
 try:
     # HTTP CODE = OK
     if REQ.status_code == 200:
-      timings = REQ.json()["results"]["datetime"][0]["times"]
+      timings = REQ.json()["data"]["timings"]
       # remove extra timings
       del timings['Imsak']
-      del timings['Sunrise']
+      # del timings['Sunrise']
       del timings['Sunset']
       del timings['Midnight']
       
@@ -42,10 +40,9 @@ try:
           break
       if current >= timings['Isha']:
         # edge case for time between isha and midnight
-        fajr = timings['Fajr']
-        hours, minutes = tdelta(current, fajr)
+        hours, minutes = tdelta(current, timings['Fajr'])
         print("{} in {}:{}".format("Fajr", hours, minutes))
     else:
-        print("Error: BAD HTTP STATUS CODE " + str(REQ.status_code))
+        print("Error: " + str(REQ.status_code))
 except (ValueError, IOError):
-    print("Error: Unable print the data")
+    print("Error: Unable to print data")
