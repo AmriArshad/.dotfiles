@@ -104,8 +104,8 @@ font-3 = "Noto Sans Mono:size=10;0"
 font-4 = "FontAwesome6Free:style=Solid:size=10;0"
 
 modules-left = i3 xwindow
-modules-center = date
-modules-right = athan miner gas weather
+modules-center = date spotify1
+modules-right = athan miner weather
 
 separator = |
 
@@ -2450,9 +2450,9 @@ interval = 1
 format-foreground = ${colors.foreground}
 format-background = ${colors.background}
 format-padding = 2
-format-underline = #0f0
+format-underline = ${colors.secondary}
 format-prefix = "  "
-format-prefix-foreground = #0f0
+format-prefix-foreground = ${colors.secondary}
 label = %output:0:150%
 
 ################################################################################
