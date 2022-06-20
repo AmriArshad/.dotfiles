@@ -25,6 +25,8 @@ if [ -d "$HOME/.local/bin" ] ;
   then PATH="$HOME/.local/bin:$PATH"
 fi
 
+export PATH=$PATH:/home/amri/.spicetify
+
 #ignore upper and lowercase when TAB completion
 bind "set completion-ignore-case on"
 
