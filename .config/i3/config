@@ -121,7 +121,7 @@ bindsym mod1+F3 exec --no-startup-id xfce4-appfinder
 bindsym $mod+F11 exec --no-startup-id "rofi -font 'Noto Sans 13' -theme-str 'window {width: 100%;height: 100%;}' -show drun"
 
 # start rofi small
-bindsym $mod+F12 exec --no-startup-id rofi -show drun -font "Noto Sans 13"
+bindsym $mod+ctrl+d exec --no-startup-id rofi -show drun -font "Noto Sans 13"
 
 ################# how to exit, logoff, suspend, ...
 
@@ -532,6 +532,9 @@ bindsym $mod+p exec --no-startup-id flameshot gui
 ################# floating or tiled rules         
 
 # floating enabled from some programs - find with xprop
+
+# Origin
+for_window [instance="origin.exe"] floating enable
 
 for_window [class="Arcolinux-welcome-app.py"] floating enable
 # for_window [class="Archlinux-tweak-tool.py"] floating enable

@@ -351,3 +351,4 @@ colorscript random
 eval "$(starship init bash)"
 
 alias dotfiles='/usr/bin/git --git-dir=/home/amri/.dotfiles/ --work-tree=/home/amri'
+. "$HOME/.cargo/env"
