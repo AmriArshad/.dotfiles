@@ -12,4 +12,5 @@ then
 	wal -i $wallpaper
 	pywal-discord
 	spicetify apply
+  notify-send "Wallpaper Updated"
 fi
