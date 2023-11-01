@@ -29,7 +29,7 @@ compositing-border = over
 
 ; Define fallback values used by all module formats
 format-foreground = #FF0000
-format-background = #00FF00
+format-background = #FFFFFF
 format-underline =
 format-overline =
 format-spacing =
@@ -2808,7 +2808,7 @@ format-background = ${colors.background}
 
 [module/athan]
 type = custom/script
-interval = 30
+interval = 60
 format = <label>
 format-prefix = " "
 format-prefix-foreground = ${colors.secondary}

@@ -1,43 +1,41 @@
 #!/bin/bash
 
-version="1.0.5"
+version="1.0.0"
 old_ifs="${IFS}"
 cache_dir="${HOME}/.cache/manga-cli"
-dependencies=("ls" "cat" "curl" "sed" "awk" "tr" "du" "rm" "mkdir" "git" "diff" "patch" "img2pdf" "zathura")
+dependencies=("cat" "curl" "sed" "awk" "tr" "du" "git" "diff" "patch" "zathura" "img2pdf")
 github_source="https://raw.githubusercontent.com/7USTIN/manga-cli/master/manga-cli"
-
+# Do not retain files except for session
+trap "rm -dRf ${cache_dir}/${mod_manga_title}" INT TERM EXIT
 # Text colors
 red="\033[1;31m"
 green="\033[1;32m"
 blue="\033[1;34m"
-no_color="\033[0m" # Default text color
+no_color="\033[0m"
 
 #########################
 # Text output functions #
 #########################
 
-print_green() { # Print green text
+print_green() {
 	printf "${green}%s${no_color}\n" "${*}"
 }
 
-print_blue() { # Print blue text
+print_blue() {
 	printf "${blue}%s${no_color}\n" "${*}"
 }
 
-print_red() { # Print red text to STDERR
+print_red() {
 	printf "${red}%s${no_color}\n" "${*}" >&2
 }
 
-print_list_item() { # Print text in blue (${1}) and the default color (${2})
+print_list_item() {
 	printf "${blue}%s${no_color} ${no_color}%s${no_color}\n" "[${1}]" "${2}"
 }
 
-prompt() { 
-	# Print text in green (${1}) and blue (${2}) 
+prompt() {
 	printf "${green}%s${no_color} ${blue}%s${no_color}" "${1}" "${2}"
-
-	# Prompt user and save user input to the variable 'reply'
-	read -r reply 
+	read -r reply
 }
 
 ######################
@@ -51,16 +49,15 @@ show_help() {
 	
 	manga-cli ${version} ( github.com/7USTIN/manga-cli )
 
-	Bash script for reading mangas via the terminal
+	A Bash script for reading mangas via the terminal
 
 	Usage:
-	  manga-cli [Options]
+	  $0 [Option] [Manga Name]
 
 	Options:
 	  -h, --help		Print this help page
 	  -V, --version		Print version number
 	  -u, --update		Fetch latest version from the Github repository
-	  -f, --fullscreen	Open Zathura in fullscreen mode 
 	  -l, --last-session	Open last session
 	  -c, --cache-size	Print cache size (${cache_dir})
 	  -C, --clear-cache	Clear cache (${cache_dir})
@@ -72,12 +69,12 @@ show_version() {
 	print_green "Version: ${version}"
 }
 
-open_pdf() { # Open PDF using Zathura and run it in the background
-	if [[ "${zathura_auto_fullscreen}" == "true" ]]; then
-		zathura --page=1 --mode="fullscreen" "${pdf_dir}" &
-	else
-		zathura --page=1 "${pdf_dir}" &
-	fi
+unknown_option() {
+	print_red "ERROR: Unknown option '${*}'"
+}
+
+open_pdf() {
+	zathura --page=1 --mode="fullscreen" "${pdf_dir}" &
 }
 
 check_number_input() {
@@ -105,7 +102,6 @@ reset_ifs() {
 ###################
 
 show_cache_size() {
-	# If cache_dir does not exist, create it
 	if [[ ! -d "${cache_dir}" ]]; then
 		mkdir --parents "${cache_dir}"
 	fi
@@ -119,8 +115,6 @@ clear_cache() {
 	show_cache_size
 
 	prompt "Proceed with clearing the cache?" "[Y/N]: "
-
-	# Convert user input to lowercase
 	user_input="$(printf "%s" "${reply}" | tr "[:upper:]" "[:lower:]")"
 
 	if [[ "${user_input}" == "y" ]]; then
@@ -130,13 +124,12 @@ clear_cache() {
 }
 
 cache_session() {
-	# Save variables in session file
 	printf '%s\n' \
-		"${mod_manga_title}" "${selected_chapter_num}" "${manga_url}" "${chapter_urls[*]}" > \
+		"${mod_manga_title}" "${selected_chapter_num}" "${chapter_urls[*]}" > \
 		"${cache_dir}/session"
 }
 
-read_last_session() {
+open_last_session() {
 	if [[ ! -f "${cache_dir}/session" ]]; then
 		print_red "ERROR: Session file not found"
 	else
@@ -145,20 +138,16 @@ read_last_session() {
 		mod_manga_title="${session[0]}"
 		unset "session[0]"
 
-		selected_chapter_num="${session[1]}"
+		selected_chapter_num=${session[1]}
 		unset "session[1]"
 
-		manga_url="${session[2]}"
-		unset "session[2]"
-
-		# Replace underscores with spaces
-		manga_title="$(printf "%s" "${mod_manga_title}" | tr "_" " ")" 
+		manga_title="$(printf "%s" "${mod_manga_title}" | tr "_" " ")"
 		chapter_urls=("${session[@]}")
 		chapter_count=${#chapter_urls[@]}
 		chapter_url="${chapter_urls[${selected_chapter_num} - 1]}"
 
-		# Update chapter list in the background 
-		scrape_chapter_list &
+		open_chapter
+		input_controls
 	fi
 }
 
@@ -185,8 +174,6 @@ select_manga() {
 }
 
 select_chapter() {
-	printf "\e[1A\e[\\" # Delete last line
-
 	if [[ ${chapter_count} -gt 1 ]]; then
 		prompt "Select chapter" "[1-${chapter_count}]: "
 		selected_chapter_num=${reply}
@@ -209,25 +196,22 @@ select_chapter() {
 ####################
 
 scrape_mangas() {
-	# Replace spaces and hyphens with underscores
 	search_query="$(printf "%s" "${manga_title_input}" | tr " -" "_")"
 	
 	scraped_results=$(
-		curl --silent "https://manganato.com/search/story/${search_query}" | # Scrape URL
-		sed --silent '/panel-search-story/,$p' | # Delete text before 'panel-search-story'
-		sed --silent '/clear: both/q;p' # Delete text after 'clear: both'
+		curl --silent "https://manganato.com/search/story/${search_query}" |
+		sed --silent '/panel-search-story/,$p' |
+		sed --silent '/clear: both/q;p'
 	)
 	
 	IFS=$'\n'
 
-	# Get titles from HTML 'alt' attribute
 	result_titles=($(
 		printf "%s" "${scraped_results}" |
 		awk 'BEGIN{RS="\" />"; FS="alt=\""}NF>1{print $NF}'
 	))
 	scraped_manga_count="${#result_titles[@]}"
 
-	# Get URLs from HTML 'href' attribute
 	result_urls=($(
 		printf "%s" "${scraped_results}" |
 		awk 'BEGIN{RS="\" title="; FS="rel=\"nofollow\" href=\""}NF>1{print $NF}'
@@ -255,25 +239,24 @@ scrape_chapter_list() {
 
 	IFS=$'\n'
 
-	# Get chapter URLs in reversed order
-	rev_chapter_urls=($(
-		curl --silent "${manga_url}" | # Scrape URL
-		sed --silent '/row-content-chapter/,$p' | # Delete text before 'row-content-chapter'
-		sed --silent '/<\/ul>/q;p' | # Delete text after '</ul>'
-		awk 'BEGIN{RS="\" title="; FS="<a rel=\"nofollow\" class=\"chapter-name text-nowrap\" href=\""}NF>1{print $NF}' # Get URLs from HTML 'href' attribute
+rev_chapter_urls=($(
+		curl --silent "${manga_url}" |
+		sed --silent '/row-content-chapter/,$p' |
+		sed --silent '/<\/ul>/q;p' |
+		awk 'BEGIN{RS="\" title="; FS="<a rel=\"nofollow\" class=\"chapter-name text-nowrap\" href=\""}NF>1{print $NF}'
 	))
 
 	chapter_urls=()
 
-	# Reverse chapter URLs so they are in the correct order
 	for i in "${rev_chapter_urls[@]}"; do
 		chapter_urls=("$i" "${chapter_urls[@]}")
 	done
 
 	chapter_count="${#chapter_urls[@]}"
 
-	if [[ "${chapter_count}" == "0" ]]; then
-		printf "\e[1A\e[\\" # Delete last line
+	printf "\e[1A\e[\\"
+
+	if [ "${chapter_count}" == "0" ]; then
 		print_red "No chapters found. Exiting..."
 		exit 1
 	fi
@@ -282,7 +265,7 @@ scrape_chapter_list() {
 scrape_chapter() {
 	if [[ -z "${mod_manga_title}" ]]; then
 		manga_title="${result_titles[${selected_manga_num} - 1]}"
-		mod_manga_title="$(printf "%s" "${manga_title}" | tr " " "_")" # Replace spaces with underscores
+		mod_manga_title="$(printf "%s" "${manga_title}" | tr " " "_")"
 	fi
 
 	image_dir="${cache_dir}/${mod_manga_title}/chapter_${selected_chapter_num}"
@@ -290,16 +273,16 @@ scrape_chapter() {
 	
 	clear
  
-	if [[ ! -f "${pdf_dir}" ]]; then # If PDF file does not exist
+	if [[ ! -f "${pdf_dir}" ]]; then
 		print_green "Fetching chapter ${selected_chapter_num}..."
 
 		IFS=$'\n'
 
-		chapter_image_urls=($(
-			curl --silent "${chapter_url}" | # Scrape URL
-			sed --silent '/container-chapter-reader/,$p' | # Delete text before 'container-chapter-reader'
-			sed --silent '/max-height: 380px/q;p' | # Delete text after 'max-height: 380px'
-			awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}' # Get image URLs from HTML 'src' attribute
+		chapter_image_links=($(
+			curl --silent "${chapter_url}" |
+			sed --silent '/container-chapter-reader/,$p' |
+			sed --silent '/max-height: 380px/q;p' |
+			awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}'
 		))
 
 		printf "\n"
@@ -307,10 +290,9 @@ scrape_chapter() {
 
 		i=0
 
-		for image_src in "${chapter_image_urls[@]}"; do
+		for image_src in "${chapter_image_links[@]}"; do
 			((i=i + 1))
 
-			# Download image in the background
 			curl \
 				--silent \
 				--create-dirs \
@@ -319,7 +301,7 @@ scrape_chapter() {
 				"${image_src}" &
 		done
 
-		wait # Wait until all images are downloaded
+		wait
 	fi
 }
 
@@ -361,24 +343,18 @@ input_controls() {
 
 	case "${user_input}" in
 		n)
-			if [[ ${selected_chapter_num} -lt ${chapter_count} ]]; then
-				((selected_chapter_num=selected_chapter_num + 1))
-				chapter_url="${chapter_urls[${selected_chapter_num} - 1]}"
-				open_chapter
-			fi
+			((selected_chapter_num=selected_chapter_num + 1))
+			chapter_url="${chapter_urls[${selected_chapter_num} - 1]}"
+			open_chapter
 			;;
 		p)
-			if [[ ${selected_chapter_num} -gt 1 ]]; then	
-				((selected_chapter_num=selected_chapter_num - 1))
-				chapter_url="${chapter_urls[${selected_chapter_num} - 1]}"
-				open_chapter
-			fi
+			((selected_chapter_num=selected_chapter_num - 1))
+			chapter_url="${chapter_urls[${selected_chapter_num} - 1]}"
+			open_chapter
 			;;
 		s)
-			if [[ ${chapter_count} -gt 1 ]]; then
-				select_chapter
-				open_chapter
-			fi
+			select_chapter
+			open_chapter
 			;;
 		r)
 			open_pdf
@@ -392,6 +368,8 @@ input_controls() {
 			;;
 		q)
 			clear
+# Do not retain any files except session on exit
+			rm -dRf  ${cache_dir}/${mod_manga_title}
 			exit 0
 			;;
 	esac
@@ -403,10 +381,9 @@ input_controls() {
 update_script() {
 	print_green "Fetching Github repository..."
 
-	# Get latest source code and compare it with this script
 	changes="$(curl --silent "${github_source}" | diff -u "${0}" -)"
 
-	if [[ -z "${changes}" ]]; then # If variable 'changes' is empty 
+	if [[ -z "${changes}" ]]; then
 		print_green "Script is up to date"
 	else
 		if printf '%s\n' "${changes}" | patch --silent "${0}" -; then
@@ -418,15 +395,14 @@ update_script() {
 }
 
 convert_imgs_to_pdf() {
-	if [[ ! -f "${pdf_dir}" ]]; then # If PDF file does not exist
+	if [[ ! -f "${pdf_dir}" ]]; then
 		print_blue "Converting images to PDF..."
-
-		if [[ "${python_cmd_prefix}" == "true" ]]; then
-			python3 -m img2pdf $(ls -v ${image_dir}/*.jpg) --output "${pdf_dir}"
-		else
-			img2pdf $(ls -v ${image_dir}/*.jpg) --output "${pdf_dir}"
-		fi
-
+# Remove any .jpg that is 950 bytes (4k / 4096 bytes size on disk) or else pdf will not be generated
+# This was caused by an issue in the scrape function where it saved javascript as a jpg
+# Will wait for fix so I can remove the following line
+#		find "${image_dir}" -name "*.jpg" -size -4k -delete
+# Minimal method of getting a proper sequential list to feed img2pdf to produce pdf pages in correct order
+		img2pdf `ls -v ${image_dir}/*.jpg` -o "${pdf_dir}" 
 		rm -r "${image_dir:?}/"
 		clear
 	fi
@@ -440,14 +416,12 @@ open_chapter() {
 }
 
 check_dependencies() {
+	exit_script=false
+
 	for dependency in "${dependencies[@]}"; do
 		if ! command -v "${dependency}" &> /dev/null; then
-			if ! pip3 show "${dependency}" &> /dev/null; then
-				print_red "Missing dependency: '${dependency}'"
-				exit_script=true
-			else
-				python_cmd_prefix=true
-			fi
+			print_red "Missing dependency: '${dependency}'"
+			exit_script=true
 		fi
 	done
 
@@ -460,7 +434,6 @@ check_dependencies() {
 # Start up #
 ############
 
-# Call 'reset_ifs' function when exiting script
 trap reset_ifs EXIT
 
 check_dependencies
@@ -475,47 +448,29 @@ main() {
 	input_controls
 }
 
-while [[ "${1}" ]]; do
-	case "${1}" in
-		-h|--help)
-			show_help
-			exit 0
-			;;
-		-V|--version)
-			show_version
-			exit 0
-			;;
-		-u|--update)
-			update_script
-			exit 0
-			;;
-		-f|--fullscreen)
-			zathura_auto_fullscreen=true
-			;;
-		-l|--last-session)
-			open_last_session=true
-			read_last_session
-			;;
-		-c|--cache-size)
-			show_cache_size
-			exit 0
-			;;
-		-C|--clear-cache)
-			clear_cache
-			exit 0
-			;;
-		*)	
-			show_help
-			exit 1
-			;;
-	esac
-
-	shift
-done
-
-if [[ "${open_last_session}" == "true" ]]; then
-	open_chapter
-	input_controls
-else 
-	main
-fi
+case "${1}" in
+	-h|--help)
+		show_help
+		;;
+	-V|--version)
+		show_version
+		;;
+	-u|--update)
+		update_script
+		;;
+	-l|--last-session)
+		open_last_session
+		;;
+	-c|--cache-size)
+		show_cache_size
+		;;
+	-C|--clear-cache)
+		clear_cache
+		;;
+	-?*)	
+		unknown_option "${1}"
+		;;
+	*)
+		manga_title_input="${*}"
+		main
+esac
