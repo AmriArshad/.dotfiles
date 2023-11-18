@@ -64,13 +64,13 @@ foreground = ${colors.foreground}
 monitor = ${env:MONITOR}
 ;monitor-fallback = HDMI1
 monitor-strict = false
-override-redirect = false
+; override-redirect = false
 bottom = false
 fixed-center = true
-width = 100%
-height = 30
-; offset-x = 1%
-;offset-y = 1%
+width = 99.5%
+height = 20
+offset-x = 0.25%
+offset-y = 10
 
 background = ${colors.background}
 foreground = ${colors.foreground}
@@ -79,19 +79,20 @@ foreground = ${colors.foreground}
   ; background-[0-9]+ = #aarrggbb
 ;background-0 =
 
-radius = 0.0
+radius = 1.0
 line-size = 2
 line-color = #000000
 
-border-size = 0
-;border-left-size = 25
-;border-right-size = 25
-;border-top-size = 0
-;border-bottom-size = 25
-border-color = #000000
+border-size = 10
+; border-left-size = 10
+; border-right-size = 10
+; border-top-size = 10
+; border-bottom-size = 10
 
-padding-left = 1
-padding-right = 1
+border-color = ${colors.background}
+; padding-left = 3
+; padding-right = 3
+; padding = 10
 
 module-margin-left = 3
 module-margin-right = 3
@@ -105,24 +106,24 @@ font-4 = "FontAwesome6Free:style=Solid:size=10;0"
 
 modules-left = i3 xwindow
 modules-center = date spotify1
-modules-right = athan weather
+modules-right = athan weather tray
 
 separator = |
 
 ;dim-value = 1.0
 
-tray-detached = false
-tray-offset-x = 0
-tray-offset-y = 0
-tray-padding = 2
-tray-maxsize = 20
-tray-scale = 1.0
-tray-position = right
-tray-background = ${colors.background}
+; tray-detached = false
+; tray-offset-x = 0
+; tray-offset-y = 00
+; tray-padding = 3
+; tray-maxsize = 20
+; tray-scale = 1.0
+; tray-position = right
+; tray-background = ${colors.background}
 
 #i3: Make the bar appear below windows
-;wm-restack = i3
-;override-redirect = true
+wm-restack = i3
+override-redirect = true
 
 ; Enable support for inter-process messaging
 ; See the Messaging wiki page for more details.
@@ -2847,5 +2848,16 @@ format-background = ${colors.background}
 exec = python -u ~/.config/polybar/scripts/miner.py
 click-left = brave https://ethermine.org/miners/5493256F6b210a2ABa8289E41FEa50767FC28538/dashboard &
 tail = true
+
+###############################################################################
+
+
+[module/tray]
+type = internal/tray
+
+; tray-padding = 3px
+tray-size = 100%
+tray-foreground = ${colors.foreground}
+tray-background = ${colors.background}
 
 ###############################################################################

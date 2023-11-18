@@ -106,7 +106,7 @@ bindsym $mod+Shift+0 move container to workspace 10; workspace 10
 bindsym $mod+d exec dmenu_run
 
 # start dmenufm
-bindsym $mod+shift+d exec --no-startup-id dmenufm
+# bindsym $mod+shift+d exec --no-startup-id dmenufm
 
 # start xfce4-appfinder
 bindsym mod1+F2 exec --no-startup-id xfce4-appfinder --collapsed
@@ -121,7 +121,7 @@ bindsym mod1+F3 exec --no-startup-id xfce4-appfinder
 bindsym $mod+F11 exec --no-startup-id "rofi -font 'Noto Sans 13' -theme-str 'window {width: 100%;height: 100%;}' -show drun"
 
 # start rofi small
-bindsym $mod+ctrl+d exec --no-startup-id rofi -show drun -font "Noto Sans 13"
+bindsym $mod+shift+d exec --no-startup-id rofi -show drun -font "Noto Sans 13"
 
 ################# how to exit, logoff, suspend, ...
 
@@ -653,7 +653,7 @@ bindsym $mod+shift+b exec --no-startup-id i3-msg border toggle
 # changing border style
 # super+t in arcolinux is starting terminal
 bindsym $mod+t border normal
-bindsym $mod+y border pixel 1
+bindsym $mod+y border pixel 3
 bindsym $mod+u border none
 
 # new_window pixel 1
@@ -676,9 +676,10 @@ popup_during_fullscreen smart
 # delete or uncomment the following lines if you do not have it or do not
 # want it
 
-for_window [class="^.*"] border pixel 2
+for_window [class="^.*"] border pixel 0
 gaps inner 10
 gaps outer 1
+gaps top 50
 # smart_gaps on
 # smart_borders on
 
