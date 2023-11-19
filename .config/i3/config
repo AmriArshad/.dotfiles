@@ -103,7 +103,7 @@ bindsym $mod+Shift+0 move container to workspace 10; workspace 10
 ################# menu's in arcolinux
 
 # start dmenu
-bindsym $mod+d exec dmenu_run
+# bindsym $mod+d exec dmenu_run
 
 # start dmenufm
 # bindsym $mod+shift+d exec --no-startup-id dmenufm
@@ -121,7 +121,7 @@ bindsym mod1+F3 exec --no-startup-id xfce4-appfinder
 bindsym $mod+F11 exec --no-startup-id "rofi -font 'Noto Sans 13' -theme-str 'window {width: 100%;height: 100%;}' -show drun"
 
 # start rofi small
-bindsym $mod+shift+d exec --no-startup-id rofi -show drun -font "Noto Sans 13"
+bindsym $mod+d exec --no-startup-id rofi -show drun -show-icons
 
 ################# how to exit, logoff, suspend, ...
 
