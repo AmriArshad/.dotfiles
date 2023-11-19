@@ -1,16 +1,11 @@
 configuration {
-	width: 1000;
-	show-icons: true;
-	lines: 15;
-	columns: 1;
-	font: "Hack 12";
-	bw: 0;
-	padding: 100;
-	eh: 1;
-	auto-select: false;
-	line-margin: 18;
-	separator-style: "solid";
-	hide-scrollbar: true;
+  display-drun: "Applications:";
+  display-window: "Windows:";
+  drun-display-format: "{name}";
+  font: "JetBrainsMono Nerd Font Medium 12";
+  modi: "window,run,drun,emoji";
+  show-icons: true;
+  icon-theme: "Papirus";
 }
 
 @theme "~/.cache/wal/colors-rofi-dark.rasi"
