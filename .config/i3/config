@@ -401,7 +401,7 @@ exec --no-startup-id conky -c ~/.config/i3/system-overview
 # exec --no-startup-id feh --bg-fill /usr/share/backgrounds/arcolinux/arco-wallpaper.jpg &
 
 # redshift
-exec --no-startup-id redshift-gtk 
+exec --no-startup-id redshift
 
 # Polybar
 exec_always --no-startup-id ~/.config/polybar/launch.sh &
@@ -676,7 +676,7 @@ popup_during_fullscreen smart
 # delete or uncomment the following lines if you do not have it or do not
 # want it
 
-for_window [class="^.*"] border pixel 0
+for_window [class="^.*"] border pixel 2
 gaps inner 10
 gaps outer 1
 gaps top 50
