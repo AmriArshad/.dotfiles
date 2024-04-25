@@ -106,7 +106,7 @@ font-4 = "FontAwesome6Free:style=Solid:size=10;0"
 
 modules-left = i3 xwindow
 modules-center = date spotify1
-modules-right = athan weather tray
+modules-right = athan fgindex weather tray
 
 separator = |
 
@@ -2817,6 +2817,20 @@ format-underline = ${colors.secondary}
 format-foreground = ${colors.foreground}
 format-background = ${colors.background}
 exec = python -u ~/.config/polybar/scripts/athan.py
+tail = true
+
+###############################################################################
+
+[module/fgindex]
+type = custom/script
+interval = 20000
+format = <label>
+format-prefix = " "
+format-prefix-foreground = ${colors.secondary}
+format-underline = ${colors.secondary}
+format-foreground = ${colors.foreground}
+format-background = ${colors.background}
+exec = python -u ~/.config/polybar/scripts/fgindex.py
 tail = true
 
 ###############################################################################
