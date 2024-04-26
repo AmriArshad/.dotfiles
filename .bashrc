@@ -350,4 +350,6 @@ colorscript random
 
 eval "$(starship init bash)"
 
+alias temps='watch -n 1 -d sensors'
+
 alias dotfiles='/usr/bin/git --git-dir=/home/amri/.dotfiles/ --work-tree=/home/amri'
