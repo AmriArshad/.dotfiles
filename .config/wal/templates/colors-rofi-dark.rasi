@@ -59,7 +59,7 @@
 #element {{
     padding: 8 12;
     background-color: transparent;
-    border-radius: 8;
+    border-radius: 0;
 }}
 
 #element-text, element-icon {{
