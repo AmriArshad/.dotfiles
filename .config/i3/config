@@ -355,6 +355,9 @@ for_window [class="Spotify"] focus
 # Wallpaper
 # exec nitrogen --restore &
 
+# Monitor script
+exec ~/.local/bin/vert-ultra.sh
+
 # TRAY APPLICATIONS
 
 # applications that are not installed will not start
